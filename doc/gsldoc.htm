@@ -1,0 +1,142 @@
+<HTML><HEAD><!--Revised: 10 Apr, 2000 By: iMatix-->
+<TITLE>The Generator Script Language</TITLE></HEAD>
+<BODY BGCOLOR="DARKBLUE">
+<CENTER><TABLE cellspacing=0 cellpadding=0 border=0 WIDTH=800 BGCOLOR="WHITE"><TR><TD WIDTH=50>&nbsp;</TD><TD>
+<TABLE border=0 WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="gsldoc.htm">&lt;&lt;</A> | &lt;
+ | <A href="gsldoc1.htm">&gt;</A> | <A href="gsldoc5.htm">&gt;&gt;</A>
+</TD><TD ALIGN=RIGHT>
+<IMG SRC="gslgen.gif" ALT="GSLgen" WIDTH=100 HEIGHT=75 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=4><B>GSLgen</B><BR><FONT SIZE=2>Version 2.0</TD></TR>
+</TABLE>
+<HR><FONT SIZE=-1 FACE="Arial">
+<H1>The Generator Script Language</H1>
+
+<DL>
+<DT><B>Author</B>
+  <DD>iMatix Corporation <A HREF="mailto:tools@imatix.com">tools@imatix.com</A>
+<DT><B>Revised</B>
+  <DD>2000/02/15
+</DL>
+
+<H2>Table of Contents</H2>
+<P>
+<UL>
+<LI><A HREF="gsldoc1.htm#TOC1">Introduction</A>
+<UL>
+<LI><A HREF="gsldoc1.htm#TOC2">Copyright and Distribution</A>
+</UL>
+<LI><A HREF="gsldoc2.htm#TOC3">Installing GSLgen</A>
+<LI><A HREF="gsldoc3.htm#TOC4">Using GSLgen</A>
+<UL>
+<UL>
+<LI><A HREF="gsldoc3.htm#TOC5">Command-line Syntax</A>
+<LI><A HREF="gsldoc3.htm#TOC6">Getting Started</A>
+<LI><A HREF="gsldoc3.htm#TOC7">A Hello World Example</A>
+<LI><A HREF="gsldoc3.htm#TOC8">A More Complex Example</A>
+<LI><A HREF="gsldoc3.htm#TOC9">What's Going On?</A>
+<LI><A HREF="gsldoc3.htm#TOC10">Another Complex Example</A>
+</UL>
+</UL>
+<LI><A HREF="gsldoc4.htm#TOC11">The General Schema Language (GSL)</A>
+<UL>
+<LI><A HREF="gsldoc4.htm#TOC12">Description</A>
+<LI><A HREF="gsldoc4.htm#TOC13">Important Concepts</A>
+<UL>
+<LI><A HREF="gsldoc4.htm#TOC14">Data Types</A>
+<LI><A HREF="gsldoc4.htm#TOC15">Constants</A>
+<LI><A HREF="gsldoc4.htm#TOC16">Scopes</A>
+<LI><A HREF="gsldoc4.htm#TOC17">Extended Scopes</A>
+<LI><A HREF="gsldoc4.htm#TOC18">Identifiers</A>
+<LI><A HREF="gsldoc4.htm#TOC19">Case Sensitivity</A>
+<LI><A HREF="gsldoc4.htm#TOC20">Expressions</A>
+<LI><A HREF="gsldoc4.htm#TOC21">Built-In Functions</A>
+<LI><A HREF="gsldoc4.htm#TOC22">Template and Script Modes</A>
+<LI><A HREF="gsldoc4.htm#TOC23">Template Lines</A>
+<LI><A HREF="gsldoc4.htm#TOC24">Script Lines</A>
+<LI><A HREF="gsldoc4.htm#TOC25">Comments</A>
+<LI><A HREF="gsldoc4.htm#TOC26">Substituting Symbols and Expressions</A>
+<LI><A HREF="gsldoc4.htm#TOC27">What You Can Substitute</A>
+<LI><A HREF="gsldoc4.htm#TOC28">Shuffle</A>
+<LI><A HREF="gsldoc4.htm#TOC29">COBOL</A>
+<LI><A HREF="gsldoc4.htm#TOC30">Predefined Identifiers</A>
+</UL>
+</UL>
+<LI><A HREF="gsldoc5.htm#TOC31">Script Commands</A>
+<UL>
+<LI><A HREF="gsldoc5.htm#TOC32">Output File Manipulation</A>
+<UL>
+<LI><A HREF="gsldoc5.htm#TOC33">.output</A>
+<LI><A HREF="gsldoc5.htm#TOC34">.append</A>
+<LI><A HREF="gsldoc5.htm#TOC35">.close</A>
+<LI><A HREF="gsldoc5.htm#TOC36">.literal</A>
+</UL>
+<LI><A HREF="gsldoc5.htm#TOC37">Control Structures</A>
+<UL>
+<LI><A HREF="gsldoc5.htm#TOC38">.for</A>
+<LI><A HREF="gsldoc5.htm#TOC39">.endfor</A>
+<LI><A HREF="gsldoc5.htm#TOC40">.if</A>
+<LI><A HREF="gsldoc5.htm#TOC41">.elsif</A>
+<LI><A HREF="gsldoc5.htm#TOC42">.else</A>
+<LI><A HREF="gsldoc5.htm#TOC43">.endif</A>
+<LI><A HREF="gsldoc5.htm#TOC44">.while</A>
+<LI><A HREF="gsldoc5.htm#TOC45">.endwhile</A>
+<LI><A HREF="gsldoc5.htm#TOC46">.next</A>
+<LI><A HREF="gsldoc5.htm#TOC47">.last</A>
+</UL>
+<LI><A HREF="gsldoc5.htm#TOC48">Symbol Definition</A>
+<UL>
+<LI><A HREF="gsldoc5.htm#TOC49">.define</A>
+</UL>
+<LI><A HREF="gsldoc5.htm#TOC50">XML Manipulation</A>
+<UL>
+<LI><A HREF="gsldoc5.htm#TOC51">.new</A>
+<LI><A HREF="gsldoc5.htm#TOC52">.endnew</A>
+<LI><A HREF="gsldoc5.htm#TOC53">.delete</A>
+<LI><A HREF="gsldoc5.htm#TOC54">.copy</A>
+<LI><A HREF="gsldoc5.htm#TOC55">.move</A>
+<LI><A HREF="gsldoc5.htm#TOC56">.sort</A>
+<LI><A HREF="gsldoc5.htm#TOC57">.load</A>
+<LI><A HREF="gsldoc5.htm#TOC58">.xml</A>
+<LI><A HREF="gsldoc5.htm#TOC59">.save</A>
+</UL>
+<LI><A HREF="gsldoc5.htm#TOC60">Script Manipulation</A>
+<UL>
+<LI><A HREF="gsldoc5.htm#TOC61">.include</A>
+<LI><A HREF="gsldoc5.htm#TOC62">.gsl</A>
+<LI><A HREF="gsldoc5.htm#TOC63">.template</A>
+<LI><A HREF="gsldoc5.htm#TOC64">.endtemplate</A>
+</UL>
+<LI><A HREF="gsldoc5.htm#TOC65">Macros and Functions</A>
+<UL>
+<LI><A HREF="gsldoc5.htm#TOC66">.macro</A>
+<LI><A HREF="gsldoc5.htm#TOC67">.endmacro</A>
+<LI><A HREF="gsldoc5.htm#TOC68">.function</A>
+<LI><A HREF="gsldoc5.htm#TOC69">.endfunction</A>
+<LI><A HREF="gsldoc5.htm#TOC70">.invoke</A>
+</UL>
+<LI><A HREF="gsldoc5.htm#TOC71">Miscellaneous</A>
+<UL>
+<LI><A HREF="gsldoc5.htm#TOC72">.echo</A>
+<LI><A HREF="gsldoc5.htm#TOC73">.abort</A>
+</UL>
+</UL>
+</UL>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="gsldoc.htm">&lt;&lt;</A> | &lt;
+ | <A href="gsldoc1.htm">&gt;</A> | <A href="gsldoc5.htm">&gt;&gt;</A>
+<BR><FONT SIZE=2>
+| <EM>The Generator Script Language</EM>
+| <A href="gsldoc1.htm">Introduction</A>
+| <A href="gsldoc2.htm">Installing GSLgen</A>
+| <A href="gsldoc3.htm">Using GSLgen</A>
+| <A href="gsldoc4.htm">The General Schema Language (GSL)</A>
+| <A href="gsldoc5.htm">Script Commands</A>
+</TD><TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0>
+</A>
+<BR><FONT SIZE=2>Copyright &#169; 1996-2000 iMatix</TD></TR></TABLE>
+</td></tr></table>
+</BODY></HTML>

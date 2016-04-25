@@ -1,0 +1,43 @@
+<HTML><HEAD>
+<TITLE>What does GSL look like?</TITLE></HEAD>
+<BODY BACKGROUND="vshade.gif">
+<CENTER>
+<TABLE HEIGHT=50 VALIGN=BOTTOM>
+<TR><TD ALIGN=CENTER><B>
+<FONT SIZE=6 COLOR="#FFFF00">
+What does GSL look like?
+</TABLE><HR>
+<TABLE HEIGHT=360 VALIGN=TOP WIDTH="80%">
+<TR><TD><B>
+<FONT SIZE=5 COLOR="#FFFFFF">
+<P><IMG SRC="dot.gif" HSPACE=10>This is a simple GSL schema
+<FONT SIZE=3><PRE>.- GSL schema to print calendar as HTML
+.output "calendar.htm"
+&lt;HTML&gt;&lt;BODY&gt;
+.for week
+&lt;H2&gt;Week starting $(start)&lt;/H2&gt;
+.  for day
+.    if "$(alert?)" &lt;&gt; ""
+&lt;FONT COLOR="$(alert)"&gt;&lt;EM&gt;
+.    endif
+&lt;P&gt;$(Name):
+.    insert day
+.    if "$(alert?)" &lt;&gt; ""
+&lt;/EM&gt;&lt;/FONT&gt;
+.    endif
+.  endfor
+&lt;HR&gt;
+.endfor
+</PRE>
+
+</TABLE></CENTER>
+<TABLE WIDTH="100%">
+<TR>
+<TD ALIGN=LEFT>
+<A href="index.htm"><IMG SRC="last.gif" BORDER=0 ALIGN=MIDDLE></A>
+<A href="index9.htm"><IMG SRC="prev.gif" BORDER=0 ALIGN=MIDDLE></A>
+<TD ALIGN=RIGHT>
+<A href="index11.htm"><IMG SRC="next.gif" BORDER=0 ALIGN=MIDDLE></A>
+<A href="index17.htm"><IMG SRC="last.gif" BORDER=0 ALIGN=MIDDLE></A>
+</TABLE>
+</BODY></HTML>

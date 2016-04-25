@@ -1,0 +1,575 @@
+<HTML><HEAD><!--Revised: 10 Apr, 2000 By: iMatix-->
+<TITLE>The General Schema Language (GSL)</TITLE></HEAD>
+<BODY BGCOLOR="DARKBLUE">
+<CENTER><TABLE cellspacing=0 cellpadding=0 border=0 WIDTH=800 BGCOLOR="WHITE"><TR><TD WIDTH=50>&nbsp;</TD><TD>
+<TABLE border=0 WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="gsldoc.htm">&lt;&lt;</A> | <A href="gsldoc3.htm">&lt;</A>
+ | <A href="gsldoc5.htm">&gt;</A> | <A href="gsldoc5.htm">&gt;&gt;</A>
+</TD><TD ALIGN=RIGHT>
+<IMG SRC="gslgen.gif" ALT="GSLgen" WIDTH=100 HEIGHT=75 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=4><B>GSLgen</B><BR><FONT SIZE=2>Version 2.0</TD></TR>
+</TABLE>
+<HR><FONT SIZE=-1 FACE="Arial">
+<H1><A NAME="TOC11">The General Schema Language (GSL)</A></H1>
+
+<H2><A NAME="TOC12">Description</A></H2>
+
+<P>GSL is a scripting language developed by iMatix Corporation. It was first
+designed as a schema language for code generation and has grown into a
+powerful tool for manipulating XML data.
+
+<P>GSL is related to a reporting language such as is used to
+generate reports from a relational database, in that it provides a mechanism
+for iterating through the data, performing calculations and outputing text
+based on the data. Unlike a reporting language it can also manipulate, create,
+load and save data.
+
+<P>Many GSL concepts are borrowed directly from database terminology, to which
+it is closely related.
+
+<H2><A NAME="TOC13">Important Concepts</A></H2>
+
+<H3><A NAME="TOC14">Data Types</A></H3>
+
+<P>GSL recognises two data types: numeric and string.  It makes no formal
+distinction between them; if a value looks numeric then it is treated
+as such, otherwise it is treated as a string.
+
+<H3><A NAME="TOC15">Constants</A></H3>
+
+<P>A string constant is specified with either single- or double-quotes as
+delimiters, for example: "ABC".   String constants may continue over
+several source lines.  The line break is considered part of the string
+constant, unless the last character in the line is a single backslash
+(`\') in which case neither the backslash nor the line break is part
+of the string.  A numeric constant is a simple number with an optional
+sign and optional decimal characters, for example 123 and -0.3.
+
+<H3><A NAME="TOC16">Scopes</A></H3>
+
+<P>A scope corresponds to an XML item or, more precisely, it is the presentation
+of an XML item to a piece of GSL script.  It typically, although not
+necessarily, has the same name as the XML item.  A scope is created by the
+`for' and `new' instructions and closed by the corresponding `endfor' and
+`endnew'.  In between these lines, the value and attributes of the XML item
+can be defined and accessed.  Child items (henceforth children) of the XML
+item can also be made available by introducing another scope with another
+`for' instruction.
+
+<P>At the start of processing of a script, two scopes are implicitly
+defined by GSLgen.  The first corresponds to the top-level item of the
+XML file.  We refer to this scope as the root scope.  The second is
+named `global' and holds the predefined identifiers (see below) and
+command-line switches.  Because these scopes are opened in this order,
+command-line switches take precedence over attributes of the root XML
+item when no scope name is specified.
+
+<P>Scopes may be referred to by name or by number.  A positive number
+refers to the index of the scope starting from the first opened scope.
+A negative number or zero refers to the index of the scope relative to
+the most recently opened scope.  One more complication:
+
+<H3><A NAME="TOC17">Extended Scopes</A></H3>
+
+<P>An extended scope also corresponds to an XML item.  In its simplest
+form it is just a scope specification.  It may also contain any number
+of `member' specifications (`-&gt;'); these refer to children of the XML
+item, their children, and so on.  This allows you to avoid introducing
+a new scope to access an only child or when you are only interested in
+the first child of that name.
+
+<P>Some examples of extended scopes:
+
+<PRE>  world
+</PRE>
+
+<P>The simplest form - this refers to a scope named `world'.
+
+<PRE>  .
+</PRE>
+
+<P>Shorthand for the most recently opened scope.
+
+<PRE>  1-&gt; field
+</PRE>
+
+<P>The first child named `field' of the XML item corresponding to the
+first open scope.
+
+<PRE>  -&gt; parent-&gt; baby
+</PRE>
+
+<P>The first child named `baby' of the first child named `parent' of the
+XML item corresponding to the most recently opened scope.
+
+<H3><A NAME="TOC18">Identifiers</A></H3>
+
+<P>GSL identifiers refer to XML attribute or item values.  (An item value
+is the text between its open and close tags.)  It generally consists of an
+extended scope specification and an attribute name.  If the attribute name is
+missing then the identifier refers to the item value.  There are also some
+short-hand forms.
+
+<P>There are a total of five different forms of identifier specification:
+
+<DL>
+<DT><B>&lt;extended-scope&gt;.&lt;attr&gt;</B>
+  <DD>A full attribute specification.
+<DT><B>&lt;attr&gt;</B>
+  <DD>An attribute specification with no scope specified.  In this case GSL
+  will search for an attribute with the given name in all the open scopes,
+  starting with the most recently opened.
+<DT><B>.&lt;attr&gt;</B>
+  <DD>An attribute specification with an empty scope specification.  This refers
+  to the specified attribute in the most recently opened scope and is
+  equivalent to `0.&lt;attr&gt;'.
+<DT><B>&lt;extended-scope&gt;.</B>
+  <DD>An item value specification.  This refers to the value of
+  the XML item referred to by the extended scope specification.
+<DT><B>.</B>
+  <DD>An item value specification with no scope specified.  This refers
+  to the value of the item corresponding to the most recently opened scope.
+</DL>
+
+<P>To avoid clashes with GSL reserved words, the names of scopes, attributes
+and items may be enclosed in square brackets, for example: [for].
+
+<P>Some examples:
+
+<P>TABLE.FIELD:
+LENGTH:
+.NAME:
+TABLE-&gt; INDEX. FIELD:
+.:
+<IMG SRC="OUTPUT" >
+
+<H3><A NAME="TOC19">Case Sensitivity</A></H3>
+
+<P>GSLgen has two modes of handling the case of XML item and attribute
+names.  In the default mode, GSLgen matches names without regard to
+the case (upper or lower) used to specify them.  In certain
+substitutions  GSLgen modifies the case of the value of the identifier
+to match the case used to specify the attribute name.  In
+case-sensitive mode, GSLgen matches names taking into account the
+case, and does not modify the case of the result.  See the description
+of subsitutions for details.
+
+<P>To change modes, set the value of the identifier `ignorecase' in the
+global scope to 0 or 1.  Eg: `global.ignorecase = 0'
+
+<H3><A NAME="TOC20">Expressions</A></H3>
+
+<P>GSL expressions are much the same as expressions in other high-level
+programming languages.  They include the following operators:
+
+<DL>
+<DT><B>Multiplicative</B>
+  <DD>*, /
+<DT><B>Additive</B>
+  <DD>+, -
+<DT><B>Default</B>
+  <DD>?
+<DT><B>Comparative</B>
+  <DD>=, &lt;&gt;, &gt;, &gt;=, &lt;, &lt;=
+<DT><B>Safe comparative</B>
+  <DD>?=, ?&lt;&gt;, ?&gt;, ?&gt;=, ?&lt;, ?&lt;=
+<DT><B>Logical</B>
+  <DD>|, &amp;, !
+</DL>
+
+<P>Operator precedence is standard (multiplicative, additive, default,
+comparative, logical) and brackets are treated as you would expect.
+
+<P>Logical operators treat zero as FALSE and non-zero as TRUE.
+
+<P>GSLgen optimises expression evaluation to the extent that the second
+operand of a binary logical operator (`|', `&amp;') is not evaluated if
+the result of the expression is determined by the first operand.  This
+allows you to use expressions such as
+
+<PRE>  defined (X) &amp; X
+</PRE>
+
+<P>since the second operator is not evaluated when X is undefined.
+
+<P>The default operator allows undefined expressions to be replaced by another
+expression.  The value of
+
+<PRE>  &lt;expr1&gt; ? [&lt;expr2&gt;]
+</PRE>
+
+<P>is equal to the value of &lt;expr1&gt;, if defined; otherwise it is equal to the
+value of &lt;expr2&gt;, whether or not the latter is defined.  If the second operand
+&lt;expr2&gt; is omitted then the evaluation of the expression is `safe', that is,
+GSLgen does not object (when this is feasible) to the result of the expression
+being undefined.  This feature can be used in symbol definitions and
+substitutions to make GSLgen accept an undefined expression.  See the
+description of these instructions for details.
+
+<P>The safe comparative operators return the same result as their equivalent
+comparative operators when both operands are defined.  If one or both
+operator is undefined, the safe operators return FALSE while the normal
+operators produce an error.  Notice that `a ?&lt;&gt; b' returns TRUE if both
+a and b are defined and they are not equal and FALSE otherwise.
+
+<P>If an operand is not a constant then its type depends its value; if it looks
+like a number then it is treated as a number, otherwise it is treated as a
+string.
+
+<P>Generally, additive, multiplicative and logical operators only apply to
+numeric operands.  There are two cases where an arithmetic operator can
+apply to string values:
+
+<DL>
+<DT><B>+</B>
+  <DD>"ABC" + "DEF" results in "ABCDEF"
+<DT><B>*</B>
+  <DD>"AB" * 3 results in "ABABAB"
+</DL>
+
+<H3><A NAME="TOC21">Built-In Functions</A></H3>
+
+<DL>
+<DT><B>count  ([&lt;scope&gt; .] &lt;child&gt;, &lt;expr&gt;)</B>
+  <DD>counts the number of children of the supplied or most recently opened scope
+  of the given name.  If an expression is specified, it is treated as
+  a condition to determine which children are counted.  In this case,
+  a new scope `COUNT' is implicitly defined while the condition is
+  evaluated.  For example: count (ITEM, COUNT.NAME = "ABC")
+  returns the number of children of the most recently opened scope whose
+  attribute NAME has the value `ABC'.
+<DT><B>index  ([&lt;scope&gt;])</B>
+  <DD>returns the index of the item associated with the supplied or most
+  recently opened scope.  This differs from the item function in
+  that the  index number is assigned after filtering (`by') and
+  sorting (`where'), and is undefined withing `by' and `where'
+  clauses.  See the description of the `for' command.
+<DT><B>item   ([&lt;scope&gt;])</B>
+  <DD>returns the item number corresponding to the supplied or most
+  recently opened scope.  This differs from the index function in
+  that the item number is unaffected by sorting or filtering, and is
+  available for use within a `where' or `by' clause.  scope.  See
+  the description of the `for' command.
+<DT><B>name ([&lt;scope&gt;])</B>
+  <DD>returns the name of the XML item currently associated with the supplied
+  or most recently opened scope.  See the description of the `for' command.
+<DT><B>exists (&lt;FileName&gt;)</B>
+  <DD>returns a logical value (1 or 0) depending on whether a file of the given
+  name exists of not.
+<DT><B>timestamp (&lt;FileName&gt;)</B>
+  <DD>returns the modification time of the file as a sixteen-character string
+  CCYYMMDDHHMMSS00; undefined if the file does not exist.
+<DT><B>defined ([Ident .] Ident)</B>
+  <DD>returns a logical value (1 or 0) depending on whether the specified
+  identifier is defined or not.
+<DT><B>env (var)</B>
+  <DD>returns the value of an environment variable.
+<DT><B>length (string)</B>
+  <DD>returns the length of a string (or number considered as a string).
+<DT><B>substr (string, start, end, length)</B>
+  <DD>returns a substring of the given string.  This may be used in a number of
+  ways:
+  substr (string, start, end, )    - specify start and end offsets
+  substr (string, start, , length) - specify start offset and length
+  substr (string, , end, length)   - specify end offset and length
+  substr (string, start, , )       - end of string from start offset
+  substr (string, , end, )         - same as substr (0, end, )
+  substr (string, , , length)      - end of string of given length
+<DT><B>trim (string)</B>
+  <DD>trims a string by removing leading and trailing white space.
+<DT><B>justify (string, width, prefix)</B>
+  <DD>justifies the string according to the specified width, prefixing each
+  line by the string `prefix'.
+<DT><B>macro (name)</B>
+  <DD>returns a logical value (1 or 0) depending on whether a macro or function
+  with the given name is defined or not.
+<DT><B>deleted ([&lt;scope&gt;])</B>
+  <DD>returns a logical value (1 or 0) depending on whether the XML item
+  associated with the specified scope has been deleted.
+</DL>
+
+<H3><A NAME="TOC22">Template and Script Modes</A></H3>
+
+<P>GSL is useful as both a template and a scripting language.  In template mode,
+the default mode when GSLgen starts with an XML file, script lines begin with
+a point (`.') and all other lines are template lines.  In script mode, the
+default mode when GSLgen starts with a GSL script, template
+lines begin with a `&gt;' (not necessarily in the first column) and all other
+lines are script lines.  You can perform exactly the same operations in
+template and script modes - the only difference is convenience for the type
+of application.
+
+<P>You can change between template and script mode with the `template' and
+`endtemplate' commands.  See the description of these commands below for
+details.
+
+<H3><A NAME="TOC23">Template Lines</A></H3>
+
+<P>The simplest template line is just text, which is copied verbatim
+to the current output file.  If no output file has been opened, or if the
+last output file has been closed, the output is copied to the standard
+output.
+
+<P>If the last character of an template line is a backslash (`\') then
+the line is output with no line terminator; otherwise a line
+terminator follows the template line.  A backslash followed by another
+character is generally replaced by that character; this allows
+characters which would normally be interpreted as script commands to
+be output literally.  There is one exception: `\n' is replaced by a
+line break.  To output a backslash, use a double-backslash (`\\').
+
+<P>In template mode an template line is any line which does not begin with a
+point (`.').  If an template line must begin with a point, use a backslash
+immediately before the point.
+
+<P>In script mode, an template line begins with a greater-than sign (`&gt;'),
+which is dropped before the line in output.
+
+<H3><A NAME="TOC24">Script Lines</A></H3>
+
+<P>In template mode, these are introduced by a point (`.') as the first
+non-space character in the line.  In script mode, any line that does
+not begin with a greater-than sign (`&gt;') is a command line.  In script
+mode, a script line may also begin with a point; this allows script
+commands to work in case the current mode is unknown.
+
+<P>The script commands are described below.
+
+<P>If a script command line ends with a backslash (`\') then the following
+script line is treated as a continuation of the current line.
+
+<H3><A NAME="TOC25">Comments</A></H3>
+
+<P>There are three ways to include comments in GSL scripts.  The first is
+to place a hyphen (`-') immediately after the point (`.') in a
+template mode or as the first character in script mode.  The second is
+to place a hash (`#') after a GSL command.  Any characters following
+the hyphen are ignored by GSLGen.  The third way (pace Tony Blair) is
+to enclose comment text (which may continue over more than one line)
+inside comment markers (`/*' and `*/') just as in C.  However if
+GSLGen finds these characters in a template line (but not inside a
+substitution) it assumes that they are destined for output, so does
+not treat them as a comment.
+
+<P>Examples:
+
+<PRE>  .- This entire line is a comment
+  .output "file"  # This is a trailing comment
+  .output /* This is an embedded
+  multi-line comment */ "file"
+  If this is a template line then /* this is not a comment */
+  $("but "/* this is */)
+</PRE>
+
+<H3><A NAME="TOC26">Substituting Symbols and Expressions</A></H3>
+
+<P>At any point within a template line, and in many places (described
+below) in a script line, a substitute construct may be used instead of
+literal text.  The format for expression subsitution is:
+
+<PRE>  $( &lt;expr&gt; [% format] [: pretty-print] )
+</PRE>
+
+<P>The order of the format and pretty-print modifiers is not important.
+
+<P>If the expression has a default operator with no second operand, and its
+result is undefined then the substitution resolves to an empty string.
+
+<P>If a format string is provided, it is used to format the result before
+continuing.  The format string is similar to that used by the printf
+function in C.  It must contain exactly one conversion specification,
+consisting of zero or more of the flags `#', `0', `-', ` ' and `+', an
+optional minimem field width, an optional precision consisting of a
+point (`.') followed by an optional number, and a mandatory conversion
+specifier among the following: `d', `i', `o', `u', `x', `X', `e', `E',
+`f', `g', `c' and `s'.  The data are always converted to the appropriate
+type (one of long int, double, char or char *) for the conversion string.
+Note that not all legal C format strings are allowed in GSL.
+
+<P>The pretty-print modifier specifies how case modification and replacement
+of certain characters takes place.  The valid pretty-print modifiers (not
+case-sensitive) are:
+
+<DL>
+<DT><B>UPPER</B>
+  <DD>UPPER CASE
+<DT><B>lower</B>
+  <DD>lower case
+<DT><B>Neat</B>
+  <DD>Neat Case Modification
+<DT><B>c</B>
+  <DD>substitute_non_alpha_to_make_c_identifier
+<DT><B>cobol</B>
+  <DD>SUBSTITUTE-NON-ALPHA-TO-MAKE-COBOL-IDENTIFIER
+</DL>
+
+<P>More than one pretty-print modifier may be specified; they should be
+separated by commas.
+
+<P>If GSLgen is in ignore case mode, and a substition expression consists
+of a single identifier and no case-modifier is specified (c or cobol
+may still be specified), the case in which the identifier name is
+specified is used as an example to determine whether the case of the
+result should be modified to UPPER, lower or Neat.  A final exception
+is that if an empty pretty-print string is provided, no case
+modification is performed.
+
+<P>Some examples:  Assume the identifier IDENT has the value `IDENT value'
+and identifer XXX is undefined.
+
+<DL>
+<DT><B>$(XXX)</B>
+  <DD>produces a run-time GSLgen error: Undefined expression.
+<DT><B>$(XXX?"Undefined")</B>
+  <DD>`Undefined'
+<DT><B>$(XXX?)</B>
+  <DD>`'
+<DT><B>$(IDENT%12s)</B>
+  <DD>` IDENT VALUE'
+<DT><B>$(ident:upper)</B>
+  <DD>`IDENT VALUE'
+<DT><B>$(Ident)</B>
+  <DD>`Ident Value'
+<DT><B>$(ident:c)</B>
+  <DD>`ident_value'
+<DT><B>$(IDENT:)</B>
+  <DD>`IDENT value'
+<DT><B>$(1 + 1)</B>
+  <DD>`2'
+</DL>
+
+<H3><A NAME="TOC27">What You Can Substitute</A></H3>
+
+<P>A substitution can appear at any place inside straight text (template line
+or string constant) or an operand in an expression.  It can also replace a
+single name in an identifier specification, but not a point (`.') or member
+(`-&gt;').
+
+<P>Some examples:  Assume the identifier IDENT has the value `NUM'
+and identifer NUM has the value `1'.
+
+<DL>
+<DT><B>$($(ident))</B>
+  <DD>`1'
+<DT><B>$($(ident)).NAME</B>
+  <DD>`1.NAME'  This may used in another expression as an identifer.
+<DT><B>$(ident)+1</B>
+  <DD>`NUM1'
+<DT><B>$($(ident))+1</B>
+  <DD>`2'
+</DL>
+
+<H3><A NAME="TOC28">Shuffle</A></H3>
+
+<P>GSLgen can help to keep code neat by enlarging or shrinking white space
+so that column numbers match as far as possible between the script and
+the output file.  For instance, in the value of the identifier X is
+ABCDEF then:
+
+<PRE>  $(X)   .
+</PRE>
+
+<P>evaluates to
+
+<PRE>  ABCDEF .
+</PRE>
+
+<P>but
+
+<PRE>  $(X?"Undefined") .
+</PRE>
+
+<P>evaluates to
+
+<PRE>  ABCDEF .
+</PRE>
+
+<P>The shuffle algorithm uses a parameter `shuffle' (actually an
+attribute of the global scope) whose numeric value influences the
+operation.  It expands a block of white space longer than `shuffle' as
+much as necessary so that the text following the white space is output
+in the same column.  It also shrinks white space down to a minimum of
+`shuffle' to make space for text preceeding the white space.  If
+`shuffle' is zero, then shuffle is disabled.  The default value of
+`shuffle' is 1; this is the value which produces the results shown
+above.
+
+<P>If the current output ends with a backslash, then the shuffle continues on
+the following line.  Thus
+
+<PRE>  $(X?"Undefined")\
+           .
+</PRE>
+
+<P>evaluates to
+
+<PRE>  ABCDEF   .
+</PRE>
+
+<P>Shuffle can cause problems in some cases, for example when outputting
+literal text where the size of white space is important.  In this case
+shuffle should be disabled with
+
+<PRE>  .shuffle = 0
+</PRE>
+
+<H3><A NAME="TOC29">COBOL</A></H3>
+
+<P>GSLgen helps you make neat COBOL code by automatically filling the first
+six characters of each line with the four-digit line number followed
+by two zeroes.  To enable this function, define an attribute `cobol' of the
+root item either using
+
+<PRE>  .cobol = 1
+</PRE>
+
+<P>or
+
+<PRE>  gslgen -cobol etc.
+</PRE>
+
+<P>when you invoke GSLgen, or even (yuk) define an attribute COBOL right in
+your XML file.
+
+<H3><A NAME="TOC30">Predefined Identifiers</A></H3>
+
+<P>There are some identifiers whose value is maintained by GSLgen.  They are
+defined as attributes of the global item.
+
+<DL>
+<DT><B>script</B>
+  <DD>The name of GSL or template script file currently being processed.
+<DT><B>filename</B>
+  <DD>The name of the XML file being processed.
+<DT><B>outfile</B>
+  <DD>The name of the current output file; undefined if there is none.
+<DT><B>line</B>
+  <DD>The line number of the line currently being output to the output file.
+<DT><B>me</B>
+  <DD>The name of the current application: gslgen.
+<DT><B>version</B>
+  <DD>The version of the current application.
+<DT><B>date</B>
+  <DD>The current date in the format YYYY/MM/DD
+<DT><B>time</B>
+  <DD>The current time in the format hh:mm:ss
+</DL>
+
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="gsldoc.htm">&lt;&lt;</A> | <A href="gsldoc3.htm">&lt;</A>
+ | <A href="gsldoc5.htm">&gt;</A> | <A href="gsldoc5.htm">&gt;&gt;</A>
+<BR><FONT SIZE=2>
+| <A href="gsldoc.htm">The Generator Script Language</A>
+| <A href="gsldoc1.htm">Introduction</A>
+| <A href="gsldoc2.htm">Installing GSLgen</A>
+| <A href="gsldoc3.htm">Using GSLgen</A>
+| <EM>The General Schema Language (GSL)</EM>
+| <A href="gsldoc5.htm">Script Commands</A>
+</TD><TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0>
+</A>
+<BR><FONT SIZE=2>Copyright &#169; 1996-2000 iMatix</TD></TR></TABLE>
+</td></tr></table>
+</BODY></HTML>

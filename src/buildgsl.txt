@@ -1,0 +1,53 @@
+#   Name:       buildgsl.txt
+#   Title:      Procedure to compile iMatix GSLgen Code Generator
+#   Package:    GSLgen Code Generator
+#
+#   Written:    1999/05/15  Pieter Hintjens <ph@imatix.com>
+#   Revised:    2000/02/20  Pieter Hintjens <ph@imatix.com>
+#
+#   Usage:      Use otto script to produce build scripts.  Generates a
+#               script 'build' to compile GSLgen.
+#
+#   Copyright:  Copyright (c) 1996-2000 iMatix Corporation
+#   This program is free software; you can redistribute it and/or modify it
+#   under the terms of the GNU General Public License as published by the Free
+#   Software Foundation; either version 2 of the License, or (at your option)
+#   any later version. This program is distributed in the hope that it will be
+#   useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+#   Public License for more details.  You should have received a copy of the
+#   GNU General Public License along with this program; if not, write to the
+#   Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+title iMatix GSLgen Code Generator 2.0
+output $default
+
+echo Building the iMatix GSLgen Code Generator
+echo Press [Enter] to continue, or Ctrl-C to abort.
+pause
+
+echo Checking for required files...
+require $LIB libsfl
+require ggcode.c ggcode.l ggcode.d ggcode.i ggcode.h
+require ggpars.c ggpars.l ggpars.d ggpars.i ggpars.h
+require gslgen.c gslgen.l gslgen.d gslgen.i
+require ggeval.c ggeval.h
+require ggcomm.c ggcomm.h
+require ggobjt.c ggobjt.h
+require ggfunc.c ggfunc.h
+require ggfile.c ggfile.h
+require ggstrn.c ggstrn.h
+
+#  These files are also part of the package
+require license.txt
+
+#  These programs go into the GSL library
+delete $lib libgsl
+library libgsl
+compile ggcode ggpars ggeval ggcomm ggobjt ggfunc ggfile ggstrn
+
+#  These are the main programs
+library
+compile gslgen
+link    gslgen
+
