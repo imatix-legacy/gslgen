@@ -23,6 +23,9 @@ detailed.  In brief summary the code can be used under the GPL v2,
 *or* under a custom license with an advertising clause; read 
 [license.txt](license.txt) for details.
 
+For more information see the [GSLgen
+Documentation](https://imatix-legacy.github.io/gslgen/gsldoc.htm).
+
 ## `doc`
 
 The `doc` directory contains the contents of the `doc` directory 
