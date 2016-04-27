@@ -1,0 +1,91 @@
+<HTML><HEAD><!--Revised: 10 Apr, 2000 By: Pieter Hintjens-->
+<TITLE>Welcome To GSLgen</TITLE></HEAD>
+<BODY BGCOLOR="DARKBLUE">
+<CENTER><TABLE cellspacing=0 cellpadding=0 border=0 WIDTH=800 BGCOLOR="WHITE"><TR><TD WIDTH=50>&nbsp;</TD><TD>
+<TABLE border=0 WIDTH=100%"><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | &lt;
+ | &gt; | <A href="index.htm">&gt;&gt;</A>
+</TD><TD ALIGN=RIGHT>
+<IMG SRC="gslgen.gif" ALT="GSLgen" WIDTH=100 HEIGHT=75 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=4><B>GSLgen</B><BR><FONT SIZE=2>Version 2.0</TD></TR>
+</TABLE>
+<HR><FONT SIZE=-1 FACE="Arial">
+
+<H1><A NAME="TOC1">Welcome To GSLgen</A></H1>
+
+<P>GSLgen is a general-purpose file generator.  It generates source code,
+data, or other files from an XML file and a schema file.  The XML file
+defines a particular set of data.  The schema file tells GSLgen what to
+do with that data.
+
+<P>GSLgen is based on two powerful concepts.  First, we use XML to describe
+data objects.  XML is a modern, clean, and self-describing data description
+language.  Second, we use a general-purpose schema language (GSL) that can
+be used to do all kinds of manipulation of the XML data and the resulting
+output.  XML + GSL is a strong, yet simple, solution to a problem that is so
+common that most people don't even realise it exists: producing source code
+and other text output mechanically, from a set of standard templates
+(schemas) and object definitions.
+
+<P>The concept of schema-based code generation is extremely powerful and
+valuable to those who are capable of abstracting a problem.  These are some
+of the things you can do with GSLgen:
+<UL>
+<LI>Generate interfaces between programs.  Typically, you define the
+interface objects as XML, then generate code to pack and unpack these
+objects.  You can use GSLgen to create an ad-hoc generator which will
+produce code in any language.  This is excellent for passing data between
+components written in different languages, and running on different systems.
+<LI>Generate programs to access a database.  We do this a lot: it's enough
+to define the table we want to work with, then we can generate subroutines
+to work with that table, SQL scripts to create and maintain it, etc.  This
+is an excellent way to build applications that are portable to any
+relational database.
+<LI>Generate HTML or other representations of data objects.
+<LI>Converting data between formats.  For instance, it's quite common to
+convert an XML file in one format to another.  GSLgen can handle this kind
+of problem easily.
+</UL>
+
+<P>GSLgen is a portable command-line tool that you can easily integrate
+into scripts and other tools.  GSLgen also comes as a module that you can
+integrate into your own tools.  This is an excellent way to build
+XML-processing tools and code generators.
+
+<P>iMatix Corporation has released GSLgen as Open Source, so that you can
+benefit from the power of this tool in your own applications.  Prebuilt
+installation packages are provided for Windows, Linux, and OS/2.  You can
+also build GSLgen from the source code provided.
+
+<P>To use GSLgen, you should be comfortable with the basic concepts of
+the Extensible Markup Language (XML).
+
+<P>To use GSLgen, you may download and build the package from the
+<A HREF="//imatix-legacy.github.com/gslgen/pub/gslsrc20.zip">source kit</A>.  You will need to
+download the SFL library from imatix.com as well.
+
+<P>There is also an <A HREF="//imatix-legacy.github.com/gslgen/pub/gslbin20.zip">executable
+available for Windows.</a>
+
+<P>To build GSLgen from the full source kit, download the SFL package,
+build that, and then run the 'build' command in the gslgen src directory.
+This creates the gslgen executable and libgsl library for linking with your
+applications.
+
+<P>For more information see the <A HREF="gsldoc.htm">GSLgen Documentation</A>.
+
+<P>If you have questions about using GSLgen, problem reports, or feature
+requests, please mail gslgen@imatix.com.
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | &lt;
+ | &gt; | <A href="index.htm">&gt;&gt;</A>
+<BR><FONT SIZE=2>
+| <EM>Welcome To GSLgen</EM>
+</TD><TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0>
+</A>
+<BR><FONT SIZE=2>Copyright &#169; 1996-2000 iMatix</TD></TR></TABLE>
+</td></tr></table>
+</BODY></HTML>

@@ -1,0 +1,554 @@
+<HTML><HEAD><!--Revised: 10 Apr, 2000 By: iMatix-->
+<TITLE>Script Commands</TITLE></HEAD>
+<BODY BGCOLOR="DARKBLUE">
+<CENTER><TABLE cellspacing=0 cellpadding=0 border=0 WIDTH=800 BGCOLOR="WHITE"><TR><TD WIDTH=50>&nbsp;</TD><TD>
+<TABLE border=0 WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="gsldoc.htm">&lt;&lt;</A> | <A href="gsldoc4.htm">&lt;</A>
+ | &gt; | <A href="gsldoc5.htm">&gt;&gt;</A>
+</TD><TD ALIGN=RIGHT>
+<IMG SRC="gslgen.gif" ALT="GSLgen" WIDTH=100 HEIGHT=75 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=4><B>GSLgen</B><BR><FONT SIZE=2>Version 2.0</TD></TR>
+</TABLE>
+<HR><FONT SIZE=-1 FACE="Arial">
+<H1><A NAME="TOC31">Script Commands</A></H1>
+
+<H2><A NAME="TOC32">Output File Manipulation</A></H2>
+
+<H3><A NAME="TOC33">.output</A></H3>
+<PRE>  .output &lt;filename&gt;
+</PRE>
+
+<P>closes the current output file, if one is open, and opens a new one.
+
+<P>Examples:
+
+<PRE>  .output "myfile.c"
+  .output FILENAME
+</PRE>
+
+<P>where FILENAME is an identifier whose value is the desired file name.
+
+<H3><A NAME="TOC34">.append</A></H3>
+<PRE>  .append &lt;filename&gt;
+</PRE>
+
+<P>closes the current output file, if one is open, and
+opens a previously existing one and prepares to extend it.
+
+<P>See the description of the output command for examples.
+
+<H3><A NAME="TOC35">.close</A></H3>
+<PRE>  .close
+</PRE>
+
+<P>closes the current output file, if one is open.
+
+<H3><A NAME="TOC36">.literal</A></H3>
+<PRE>  .literal (from &lt;filename&gt; | &lt;expr&gt; || &lt;&lt; &lt;terminator&gt;)
+</PRE>
+
+<P>Copies text directly to the output file, without substition.  The text
+can come from another file, a GSL expression, or from lines in the
+script, ending with a line beginning with the specified terminator.
+
+<P>Examples:
+
+<PRE>  .literal from "file.txt"
+  .literal "whatever you want"
+  .literal &lt;&lt; .endliteral
+  Lines are now copied without substitution of
+  things like $(abc).
+  .endliteral
+</PRE>
+
+<H2><A NAME="TOC37">Control Structures</A></H2>
+
+<H3><A NAME="TOC38">.for</A></H3>
+<PRE>  .for [[&lt;extended-scope&gt;] .] &lt;name&gt; [as &lt;alias&gt;] [where &lt;expr&gt;] [by &lt;expr&gt;]
+  .for  [&lt;extended-scope&gt;] .         [as &lt;alias&gt;] [where &lt;expr&gt;] [by &lt;expr&gt;]
+</PRE>
+
+<P>opens a scope and introduces a loop.  The following block of code is
+processed once for each item specified.  If no scope if specified, the
+most recently opened scope is assumed.  The items processed are those
+children of the XML item corresponding to this scope.  If the first
+form is used only children with the specified name are processed; if
+the second form is used, all children are processed.
+
+<P>The alias allows you to give the new scope a name other than the
+specified item name; use this when you nest scopes which would
+otherwise have the same name or to supply a scope name when using the
+second form.
+
+<P>The where clause allows you to specify a condition which must be
+satisfied for the code to be processed; the expression is evaluated
+before any processing occurs.
+
+<P>The by clause allows you to sort the items according to the result of
+evaluating the expression for each item.  If no by clause is specified
+the items are processed from the oldest to the youngest, the same
+order in which they are described in the XML file.
+
+<P>The expressions in the where and by clauses are evaluated within the
+new scope.  This means that they can access attributes of the iterating
+item.
+
+<P>During the evaluation of the `by' and `where' expressions, as well as
+during the processing of the code, the function `item (name)' returns
+the number of the child (1, 2, ...) of the current item.  This number
+is associated with the XML item itself and is not affected by a `by'
+or `where' clause.
+
+<P>Within the loop, but not within `by' and `where' expressions, the function
+`index (name)' returns the index of the current iteration.  This is associated
+with the loop, so that it always takes consecutive values.
+
+<H3><A NAME="TOC39">.endfor</A></H3>
+<PRE>  .endfor
+</PRE>
+
+<P>terminates a .for loop, closing the scope.
+
+<P>Examples:
+
+<PRE>  .for RECORD.FIELD by NAME
+  $(FIELD.NAME)
+  .endfor
+</PRE>
+
+<P>outputs the names of the fields of the current record, sorted in alphabetical
+order.
+
+<PRE>  .for FIELD where item () = 2
+  something
+  .endfor
+</PRE>
+
+<P>processes only the second item named FIELD.
+
+<H3><A NAME="TOC40">.if</A></H3>
+<PRE>  .if &lt;expr&gt;
+</PRE>
+
+<P>starts conditional processing of the following block of code if the result
+of evaluating the expression is non-zero.
+
+<H3><A NAME="TOC41">.elsif</A></H3>
+
+<PRE>  .elsif &lt;expr&gt;
+</PRE>
+
+<P>may follow an `if' construct.  Any number of `elsif' constructs may be used.
+
+<H3><A NAME="TOC42">.else</A></H3>
+
+<PRE>  .else
+</PRE>
+
+<P>may follow an `if' or `elsif' construct.  The following block of code is
+processed if the logical value of all the expressions is FALSE.
+
+<H3><A NAME="TOC43">.endif</A></H3>
+<PRE>  .endif
+</PRE>
+
+<P>terminates a conditional processing construct.
+
+<P>Examples:
+
+<PRE>  .if NAME = "JAMES"
+  something
+  .elsif NAME = "JAIME"
+  something else
+  .else
+  everything else
+  .endif
+</PRE>
+
+<H3><A NAME="TOC44">.while</A></H3>
+<PRE>  .while &lt;expr&gt;
+</PRE>
+
+<P>introduces a loop.  The following block of code is processed repeatedly as long
+as the expression evaluates to a logical value of TRUE, that is not equal to
+zero.  Expression evaluation takes place before the code is processed, so that
+the code will never be processed if the expression evaluates to FALSE the first
+time.
+
+<H3><A NAME="TOC45">.endwhile</A></H3>
+<PRE>  .endwhile
+</PRE>
+
+<P>terminates a `while' loop.
+
+<P>Examples:
+
+<PRE>  .define I = 0
+  .while I &lt; 5
+  loop iteration number $(I)
+  .endwhile
+</PRE>
+
+<H3><A NAME="TOC46">.next</A></H3>
+<PRE>  .next
+</PRE>
+
+<P>inside a `for' or `while' loop causes immediate iteration, skipping execution
+of any code between the `next' command and the `endfor' or `endwhile'
+statement.
+
+<H3><A NAME="TOC47">.last</A></H3>
+<PRE>  .last
+</PRE>
+
+<P>inside a `for' or `while' loop causes the loop to terminate iteration
+immediately.  Control passes to the line following the `endfor' or `endwhile'
+statement.
+
+<H2><A NAME="TOC48">Symbol Definition</A></H2>
+
+<H3><A NAME="TOC49">.define</A></H3>
+
+<PRE>  .[define] &lt;identifier&gt; [&lt;operator&gt;]= [ &lt;expr&gt; ]
+</PRE>
+
+<P>defines or undefines an XML attribute or item value.  Note that the word
+`define' is itself optional; any GSL line which does not begin with a
+reserved GSL word is an implied `define'.  There are several different forms,
+described below:
+
+<P>If the scope is omitted from the identifier specification, GSLgen searches
+open scopes for one in which an attribute of the specified name exists.  If
+none is found, it uses the first open scope, which effectively makes
+the identifier a global variable.
+
+<P>If the name is omitted from an identifier, the value of the XML item is
+modified, rather than that of an attribute.
+
+<P>If neither scope nor name is specified, GSLgen defines the value of the XML
+item associated with the most recently open scope.  This removes any existing
+value and appends the new value after any children.
+
+<P>If the expression is left empty then the symbol becomes undefined.  If the
+expression ends with a default operator `?' but no default expression then
+an undefined expression causes the symbol to becume undefined rather than
+producing a runtime error.
+
+<P>If a multiplicative, additive or default operator is specified then the
+value assigned to the symbol is the result of that operator and the
+supplied expression to the former value of the operator.
+
+<P>Examples:
+
+<PRE>  .define x = 1
+</PRE>
+
+<P>assigns the value 1 to the identifier x in the most recently opened
+open scope where x is already defined, or in the global scope if x is
+undefined.
+
+<PRE>  .define -&gt;child. = "Value"
+</PRE>
+
+<P>assigns the string `Value' to the value of the first XML item child
+which is a child of the XML item corresponding to the most recently
+opened scope.
+
+<PRE>  .x *= 2
+</PRE>
+
+<P>multiplies the value of the identifier x by 2.
+
+<PRE>  .x ?= y ? z ?
+</PRE>
+
+<P>does nothing if x is already defined; otherwise assigns it the value of y,
+or if y is undefined then the value of z, or if z is undefined, x remains
+undefined.
+
+<H2><A NAME="TOC50">XML Manipulation</A></H2>
+
+<H3><A NAME="TOC51">.new</A></H3>
+
+<PRE>  .new &lt;name&gt; [to &lt;extended-scope&gt; | before &lt;before-scope&gt; | after &lt;after-scope&gt;] [as &lt;alias&gt;]
+</PRE>
+
+<P>creates a new XML item.  This allows you to build new items in the
+data tree.  The new item has the specified name and is a child of the
+XML item corresponding to th specified scope, or the most recently
+opened scope if none is specified.  If a `before-scope' or
+`after-scope' is specified, then then it must be the name of an open
+scope corresponding to a child of &lt;scope&gt;, and the new item is
+inserted just before &lt;before-scope&gt; or just after &lt;after-scope&gt;;
+otherwise the  new item is inserted after any existing children.  The
+construct creates a new scope with the name specified by the alias or
+the item name if there is no alias.  The following block of code is
+processed exactly once within this new scope.  It would typically done
+some attributes of the new XML item.  These values can then be
+retrieved during a future iteration of a `for' construct through the
+new item.
+
+<H3><A NAME="TOC52">.endnew</A></H3>
+
+<PRE>  .endnew
+</PRE>
+
+<P>terminates a `new' construct.
+
+<P>Examples:
+
+<PRE>  .new RECORD.FIELD
+  .    define FIELD.NAME = "NEW FIELD"
+  .endnew
+  .for RECORD.FIELD as OLDFIELD where NAME = "OLD FIELD"
+  .    new RECORD.FIELD before OLDFIELD
+  .        define FIELD.NAME = "NEW FIELD"
+  .    endnew
+  .endfor
+</PRE>
+
+<H3><A NAME="TOC53">.delete</A></H3>
+<PRE>  .delete &lt;extended-scope&gt;
+</PRE>
+
+<P>deletes the XML item (and any descendents) corresponding to the specified
+scope.  Once the item has been deleted, any attempt to reference it produces
+an error.
+
+<P>The function `delete (name)' allows you to determine whether the XML item
+associated with a scope has been deleted.
+
+<P>Examples:
+
+<PRE>  .for RECORD.FIELD where TYPE = "COMMENT"
+  .    delete FIELD
+  .endfor
+</PRE>
+
+<H3><A NAME="TOC54">.copy</A></H3>
+<PRE>  .copy [&lt;from-scope&gt;] [ to &lt;parent-scope&gt; | after &lt;after-scope&gt; | before &lt;before-scope&gt; ] [as &lt;name&gt;]
+</PRE>
+
+<P>makes a copy the XML item associated with &lt;from-scope&gt; (or the most
+recently opened scope if not specified) at the point
+specified by either the new parent (`to') or new sibling (`after' or
+`before'), or as a child of the XML item of the most recently opened
+scope if no parent of sibling is specified.  The `as' clause allows
+you to the new item to have a different name from the old item.
+
+<P>Examples:
+
+<PRE>  .for DATABASE.TABLE
+  .    for RECORD.FIELD
+  .        copy FIELD to TABLE
+  .    endfor
+  .endfor
+</PRE>
+
+<H3><A NAME="TOC55">.move</A></H3>
+<PRE>  .move [&lt;from-scope&gt;] [ to &lt;parent-scope&gt; | after &lt;after-ident&gt; | before &lt;before-ident&gt; ] [as &lt;name&gt;]
+</PRE>
+
+<P>re-attaches an XML item at the point specified by  a `to', `after' or
+`before' clause, renaming it to the name specified in the
+`as' clause, if specified.
+
+<P>GSLgen detects any attempt to make an XML item its own descendent.
+
+<P>Note that moving an XML does not invalidate any scope associated with it.
+If the moved XML item is associated with a future iteration of a `for' loop,
+the iteration will still take place even if the item is no longer a child
+of the extended scope from the `for' instruction.
+
+<P>Examples:
+
+<PRE>  .for TABLE.RECORD
+  .    for RECORD.FIELD
+  .        move FIELD to RECORD
+  .    endfor
+  .endfor
+</PRE>
+
+<H3><A NAME="TOC56">.sort</A></H3>
+
+<PRE>  .sort [[&lt;extended-scope&gt;] .] [&lt;name&gt;] [as &lt;alias&gt;] by &lt;expr&gt;
+</PRE>
+
+<P>Sorts the specified XML items.  A scope is created with each item in
+turn and is used to evaluate the expression.  The result is then used
+to sort the items.  The `as' clause allows you to give the created
+scope a different name.  After execution, the specified XML items are
+in order and after any other children of the same parent.
+
+<H3><A NAME="TOC57">.load</A></H3>
+<PRE>  .load &lt;filename&gt; [ to &lt;parent-scope&gt; | after &lt;after-ident&gt; | before &lt;before-ident&gt; ] [as &lt;name&gt;]
+</PRE>
+
+<P>Loads the contents of an XML file at the place specified by a `to', `after' or
+`before' clause, renaming the items to the name specified in the `as'
+clause, if specified.
+
+<P>Note that `load' is deprecated.  Use `xml' instead.
+
+<H3><A NAME="TOC58">.xml</A></H3>
+<PRE>  .xml [ to &lt;parent-scope&gt; | after &lt;after-ident&gt; | before &lt;before-ident&gt; ] [as &lt;name&gt;] (from &lt;filename&gt; | &lt;expr&gt; || &lt;&lt; &lt;terminator&gt;)
+</PRE>
+
+<P>imports XML data into the the specified point.  The data can come from a file,
+an expression, or from lines in the script, ending with a line beginning with
+the specified terminator.  Note that in this form, GSLgen uses the lines
+literally, without substitution.
+
+<P>Examples:
+
+<PRE>  .xml from "data.xml"
+  .xml to RECORD '&lt;field name="date"/&gt;&lt;field name="time"/&gt;'
+  .xml after SISTER &lt;&lt; .endxml
+  &lt;text&gt;
+  All this text is used literally even though it contains stuff
+  that looks like a substitution, eg $(abc).
+  &lt;/text&gt;
+  .endxml
+</PRE>
+
+<H3><A NAME="TOC59">.save</A></H3>
+
+<PRE>  .save &lt;extended-scope&gt; as &lt;filename&gt;
+</PRE>
+
+<P>creates an XML file representing the XML item corresponding to the specified
+scope.  This recursively includes all child items.
+
+<H2><A NAME="TOC60">Script Manipulation</A></H2>
+
+<H3><A NAME="TOC61">.include</A></H3>
+
+<PRE>  .include &lt;filename&gt;
+</PRE>
+
+<P>includes another script file.  Deprecated - see `gsl'
+
+<H3><A NAME="TOC62">.gsl</A></H3>
+
+<PRE>  .gsl from &lt;filename&gt;
+  .gsl &lt;expr&gt;
+</PRE>
+
+<P>interprets the contents of the specified file or expression as GSL,
+just as though it were part of the script.
+
+<P>Examples:
+
+<PRE>  .gsl "header.gsl"
+  .gsl GSL.TEXT
+</PRE>
+
+<H3><A NAME="TOC63">.template</A></H3>
+<PRE>  .template (0 | 1)
+</PRE>
+
+<P>Turns template mode on or off.
+
+<H3><A NAME="TOC64">.endtemplate</A></H3>
+
+<P>Terminates the block introduced by a `template' instruction.
+
+<H2><A NAME="TOC65">Macros and Functions</A></H2>
+
+<P>Macros and functions are pieces of GSL which can be invoked with parameters.
+The only difference between a macro and as function is that macros are
+interpreted in template mode and functions in script mode.
+
+<H3><A NAME="TOC66">.macro</A></H3>
+<PRE>  .macro &lt;name&gt; [(&lt;param&gt; [, &lt;param&gt;] ...)]
+</PRE>
+
+<P>introduces a macro definition with the specified name.
+
+<H3><A NAME="TOC67">.endmacro</A></H3>
+<PRE>  .endmacro
+</PRE>
+
+<P>terminates a macro definition.
+
+<H3><A NAME="TOC68">.function</A></H3>
+   .function &lt;name&gt; [([&lt;param&gt;] [, &lt;param&gt;] ...)]
+
+<P>introduces a function definition with the specified name.
+
+<H3><A NAME="TOC69">.endfunction</A></H3>
+<PRE>  .endfunction
+</PRE>
+
+<P>terminates a function definition.
+
+<H3><A NAME="TOC70">.invoke</A></H3>
+<PRE>  .[invoke] &lt;name&gt; [([&lt;expr&gt;] [, [&lt;expr&gt;]])] ...)]
+</PRE>
+
+<P>causes a previously defined macro or function to be processed.  Note that
+the keyword `invoke' is optional, so that a function can be invoked by simply
+giving its name and a (possibly empty) parameter list.
+
+<P>This creates a special scope with the name of the macro or function,
+and attributes corresponding to the parameters value of the
+parameters.  This scope does not count in numeric scope specifications
+and cannot have children.  It can be used to define local variables,
+but must in this case be specified by name.
+
+<P>The number of expressions (or empty expressions) must match exactly
+the number of parameters in the definition.  An empty expression or an
+expression whose value is undefined causes the corresponding parameter
+to be undefined during processing of the macro code.
+
+<P>Examples:
+
+<PRE>  .macro echotwice (text)
+  .    echo text
+  .    echo text
+  .endmacro
+  ...
+  .echotwice ("Hello")
+  .function recursive (N)
+      recursive.localvar = N - 1
+      recursive (localvar)
+  .endfunction
+  .function assign (dest, source)
+      .$(dest) = source
+  .endfunction
+</PRE>
+
+<H2><A NAME="TOC71">Miscellaneous</A></H2>
+
+<H3><A NAME="TOC72">.echo</A></H3>
+
+<PRE>  .echo &lt;expr&gt;
+</PRE>
+
+<P>outputs the given expression to the standard output.
+
+<H3><A NAME="TOC73">.abort</A></H3>
+
+<PRE>  .abort &lt;expr&gt;
+</PRE>
+
+<P>outputs the given expression to the standard output and halts GSLgen
+operation.
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="gsldoc.htm">&lt;&lt;</A> | <A href="gsldoc4.htm">&lt;</A>
+ | &gt; | <A href="gsldoc5.htm">&gt;&gt;</A>
+<BR><FONT SIZE=2>
+| <A href="gsldoc.htm">The Generator Script Language</A>
+| <A href="gsldoc1.htm">Introduction</A>
+| <A href="gsldoc2.htm">Installing GSLgen</A>
+| <A href="gsldoc3.htm">Using GSLgen</A>
+| <A href="gsldoc4.htm">The General Schema Language (GSL)</A>
+| <EM>Script Commands</EM>
+</TD><TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0>
+</A>
+<BR><FONT SIZE=2>Copyright &#169; 1996-2000 iMatix</TD></TR></TABLE>
+</td></tr></table>
+</BODY></HTML>
