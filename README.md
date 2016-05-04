@@ -25,7 +25,7 @@ read [license.txt](license.txt) for details.
 
 On [2016-04-29 it was also released under the
 MPLv2](https://github.com/imatix-legacy/license) ([license
-text](https://www.mozilla.org/en-US/MPL/2.0/)), so `gslgen` can
+text](https://imatix-legacy.github.io/license/MPLv2.html)), so `gslgen` can
 be used under the GPLv2, the MPLv2, or the custom license with
 an advertsing clause.
 
