@@ -18,10 +18,16 @@ on 2016-04-25.
 These are kept for historic reference; any new usage of `GSL`, should
 use the modern version at <https://github.com/imatix/gsl>.
 
-The license terms are in [license.txt](license.txt) and are fairly 
-detailed.  In brief summary the code can be used under the GPL v2, 
-*or* under a custom license with an advertising clause; read 
-[license.txt](license.txt) for details.
+The original license terms are in [license.txt](license.txt) and
+are fairly detailed.  In brief summary the code can be used under
+the GPL v2, *or* under a custom license with an advertising clause;
+read [license.txt](license.txt) for details.
+
+On [2016-04-29 it was also released under the
+MPLv2](https://github.com/imatix-legacy/license) ([license
+text](https://www.mozilla.org/en-US/MPL/2.0/)), so `gslgen` can
+be used under the GPLv2, the MPLv2, or the custom license with
+an advertsing clause.
 
 For more information see the [GSLgen
 Documentation](https://imatix-legacy.github.io/gslgen/gsldoc.htm).
