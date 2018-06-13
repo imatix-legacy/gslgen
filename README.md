@@ -2,9 +2,11 @@
 
 GSLgen is an early code generator from iMatix Corporation.
 
-The tool was later renamed "GSL" and development continued at:
+The tool was later renamed "GSL" and development continues at:
 
-<https://github.com/imatix/gsl>
+<https://github.com/zeromq/gsl>
+
+(There is also development in the 2000s at <https://github.com/imatix/gsl>.)
 
 This repository holds the 1999 and early 2000 releases of GSLgen, 
 retrieved from:
